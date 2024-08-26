@@ -71,7 +71,7 @@
           then {"${builtins.head parts}" = value;}
           else {"${builtins.head parts}" = generateNestedAttrSet (builtins.tail parts) value;};
       in
-        generateNestedAttrSet splitPath (./. + path))
+        generateNestedAttrSet splitPath (./wallpapers + path))
       paths;
 
     # wallpaperList :: [AttrSet] -> AttrSet
