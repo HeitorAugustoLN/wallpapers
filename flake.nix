@@ -54,7 +54,7 @@
     ls = dir: let
       absolutePath = lib.filesystem.listFilesRecursive dir;
     in
-      map (path: lib.strings.replaceStrings [(toString dir)] ["."] (toString path)) absolutePath;
+      map (path: lib.strings.replaceStrings [(toString dir)] [""] (toString path)) absolutePath;
 
     # generateWallpapersList :: [String] -> [AttrSet]
     #
@@ -65,7 +65,7 @@
     generateWallpapersList = paths:
       map (path: let
         pathNoExt = removeSuffixes [".png" ".jpg" ".jpeg"] path;
-        splitPath = builtins.filter (str: str != ".") (lib.strings.splitString "/" pathNoExt);
+        splitPath = builtins.filter (str: str != "") (lib.strings.splitString "/" pathNoExt);
         generateNestedAttrSet = parts: value:
           if builtins.length parts == 1
           then {"${builtins.head parts}" = value;}
