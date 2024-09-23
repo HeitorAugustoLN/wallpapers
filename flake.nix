@@ -20,29 +20,26 @@
       forAllSystems =
         function: lib.genAttrs supportedSystems (system: function inputs.nixpkgs.legacyPackages.${system});
 
-      # removeSuffixes :: String -> String -> String
+      # removeSuffixes :: [String] -> String -> String
       #
-      # Remove a list of suffixes from a string
-      # Return a string
+      # Remove a list of suffixes from a string. If the string has any of the suffixes, it will be removed.
       #
-      # Example: [".png" ".jpg"] "./wallpapers/foo/bar.png" -> "./wallpapers/foo/bar"
+      # Example: removeSuffixes [ ".png" ".jpg" ] "wallpaper.png" -> "wallpaper"
       removeSuffixes =
         suffixes: str: builtins.foldl' (str: suffix: lib.strings.removeSuffix suffix str) str suffixes;
 
       # hasSuffixes :: [String] -> String -> Bool
       #
-      # Check if a string has any of the suffixes
-      # Return a boolean
+      # Check if a string has any of the suffixes.
       #
-      # Example: [".png" ".jpg"] "./wallpapers/foo/bar.png" -> true
+      # Example: hasSuffixes [ ".png" ".jpg" ] "wallpaper.png" -> true
       hasSuffixes = suffixes: str: builtins.any (suffix: lib.strings.hasSuffix suffix str) suffixes;
 
       # isWallpaper :: [String] -> [String]
       #
-      # Filter all files that have a specific set of suffixes
-      # Return a list of relative paths in the form of strings
+      # Filter a list of paths to only keep the ones that have a image extension.
       #
-      # Example: ["./wallpapers/foo/bar.png" "./wallpapers/README.md"] -> ["./wallpapers/foo/bar.png"]
+      # Example: isWallpaper [ "wallpaper.png" "text.txt" ] -> [ "wallpaper.png" ]
       isWallpaper =
         paths:
         builtins.filter (
@@ -56,10 +53,10 @@
 
       # ls :: Path -> [String]
       #
-      # List all files recursively in a directory
-      # Return a list of relative paths in the form of strings
+      # List all files recursively in a directory.
+      # The paths are relative to the directory.
       #
-      # Example: ls ./wallpapers -> ["./wallpapers/foo/bar.png" "./wallpapers/baz.png"]
+      # Example: ls ./wallpapers -> [ "/wallpaper.png" ]
       ls =
         dir:
         let
@@ -69,10 +66,10 @@
 
       # generateWallpapersList :: [String] -> [AttrSet]
       #
-      # Generate nested wallpaper attribute sets with recursion
-      # Return a list of attribute sets
+      # Generate a list of attribute sets from a list of paths.
+      # The attribute sets are nested based on the path structure.
       #
-      # Example: ["desktop" "foo" "bar"] -> [{ desktop = { foo = { bar = ./wallpapers/foo/bar.png; }; }; }]
+      # Example: generateWallpapersList [ "/wallpaper.png" ] -> [ { wallpaper = ./wallpapers/wallpaper.png; } ]
       generateWallpapersList =
         paths:
         map (
@@ -94,12 +91,11 @@
           generateNestedAttrSet splitPath (./wallpapers + path)
         ) paths;
 
-      # wallpaperList :: [AttrSet] -> AttrSet
+      # buildWallpaperExports :: [AttrSet] -> AttrSet
       #
-      # Remove attribute sets from list and merge them into a single one
-      # Return a single attribute set
+      # Build a single attribute set from a list of attribute sets.
       #
-      # Example: [{ desktop = { foo = { bar = ./wallpapers/foo/bar.png; }; }; }] -> { desktop = { foo = { bar = ./wallpapers/foo/bar.png; }; }; }
+      # Example: buildWallpaperExports [ { wallpaper = ./wallpapers/wallpaper.png; } ] -> { wallpaper = ./wallpapers/wallpaper.png; }
       buildWallpaperExports =
         wallpaperList: builtins.foldl' (x: y: lib.recursiveUpdate x y) { } wallpaperList;
 
