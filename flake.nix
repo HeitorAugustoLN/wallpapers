@@ -98,12 +98,9 @@
       # Example: buildWallpaperExports [ { wallpaper = ./wallpapers/wallpaper.png; } ] -> { wallpaper = ./wallpapers/wallpaper.png; }
       buildWallpaperExports =
         wallpaperList: builtins.foldl' (x: y: lib.recursiveUpdate x y) { } wallpaperList;
-
-      attrsets = buildWallpaperExports (generateWallpapersList (isWallpaper (ls ./wallpapers)));
     in
     {
       formatter = forAllSystems (pkgs: pkgs.nixfmt-rfc-style);
-
-      inherit (attrsets) desktop;
-    };
+    }
+    // (buildWallpaperExports (generateWallpapersList (isWallpaper (ls ./wallpapers))));
 }
