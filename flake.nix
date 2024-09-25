@@ -99,8 +99,7 @@
       buildWallpaperExports =
         wallpaperList: builtins.foldl' (x: y: lib.recursiveUpdate x y) { } wallpaperList;
     in
-    {
+    lib.recursiveUpdate {
       formatter = forAllSystems (pkgs: pkgs.nixfmt-rfc-style);
-    }
-    // (buildWallpaperExports (generateWallpapersList (isWallpaper (ls ./wallpapers))));
+    } (buildWallpaperExports (generateWallpapersList (isWallpaper (ls ./wallpapers))));
 }
