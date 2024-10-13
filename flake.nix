@@ -1,14 +1,12 @@
 {
-  description = "HeitorAugustoLN's personal wallpapers Nix flake.";
+  description = "HeitorAugustoLN's personal wallpapers collection flake";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
     inputs:
     let
-      lib = inputs.nixpkgs.lib;
+      inherit (inputs.nixpkgs) lib;
 
       supportedSystems = [
         "aarch64-linux"
